@@ -10,8 +10,8 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async findByPhone(phoneNumber: string): Promise<User> {
-        return this.userRepository.findOne({ where: { phoneNumber } });
+    async findByPhone(phoneNumber: string): Promise<User | undefined> {
+        return this.userRepository.find({ where: { phoneNumber }});
     }
 
     async createUser(phoneNumber: string, role: UserType = UserType.CUSTOMER): Promise<User> {
