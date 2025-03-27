@@ -43,6 +43,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=pgadmin4
     ports:
       - '5050:80'
+    networks:
+      - app-network
     depends_on:
       - db
 

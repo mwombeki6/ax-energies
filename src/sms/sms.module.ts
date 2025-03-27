@@ -8,5 +8,6 @@ import { UserModule } from '../users/users.module';
   imports: [ConfigModule, UserModule],
   providers: [SmsService],
   controllers: [SmsController],
+  exports: [SmsService],
 })
 export class SmsModule {}
