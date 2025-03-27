@@ -1,4 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn,  CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
 export enum UserType {
   CUSTOMER = 'customer',
@@ -16,8 +21,17 @@ export class User {
   @Column({ type: 'enum', enum: UserType, default: UserType.CUSTOMER })
   role: UserType;
 
-  @CreateDateColumn()
+  @Column()
+  otpHash: string;
+
+  @Column()
+  otpExpiry: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
   @Column({ default: '' })
   profile: string;

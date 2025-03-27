@@ -7,8 +7,8 @@ export class AuthController {
 
   @Post('send-otp')
   async sendOtp(@Body('phoneNumber') phoneNumber: string) {
-    await this.authService.sendOtp(phoneNumber);
-    return { message: 'OTP sent' };
+    await this.authService.initiateLogin(phoneNumber);
+    return { message: 'OTP sent successfully' };
   }
 
   @Post('verify-otp')

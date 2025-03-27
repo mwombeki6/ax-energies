@@ -1,61 +1,86 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import axios from 'axios';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../redis/redis.service';
+import { SmsService } from '../sms/sms.service';
 import { UsersService } from '../users/users.service';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class AuthService {
-    private readonly apiKey = process.env.AT_API_KEY;
-    private readonly username = process.env.AT_USERNAME;
-    private otpStore = new Map<string, { otp: string; expiresAt: Date }>();
-
     constructor(
-        private readonly userService: UsersService,
-        private readonly jwtService: JwtService,
-    ) { }
+      private jwtService: JwtService,
+      private config: ConfigService,
+      private redis: RedisService,
+      private smsService: SmsService,
+      private usersService: UsersService,
+    ) {}
 
-    async sendOtp(phoneNumber: string): Promise<string> {
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        this.otpStore.set(phoneNumber, {
-            otp,
-            expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
-        });
-
-        const smsData = {
-            username: this.username,
-            to: phoneNumber,
-            message: `Your OTP code is: ${otp}`,
-        };
-
-        try {
-            await axios.post(
-                'https://api.africastalking.com/version1/messaging',
-                new URLSearchParams(smsData),
-                {
-                    headers: {
-                        'apiKey': this.apiKey,
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                },
-            );
-            return 'OTP sent successfully!';
-        } catch (error) {
-            throw new Error('Failed to send OTP');
-        }
+    private generateOtp(): string {
+        return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    async verifyOtp(phoneNumber: string, otp: string): Promise<{ token: string; role: string }> {
-        const storedOtp = this.otpStore.get(phoneNumber);
-        if (storedOtp !== otp) {
+    async initiateLogin(phoneNumber: string): Promise<void> {
+        const otp = this.generateOtp();
+        const ttl = this.config.get<number>('OTP_TTL');
+
+        await this.redis.set(`otp:${phoneNumber}`, otp, 'EX', ttl);
+        await this.smsService.sendOtp(phoneNumber, otp);
+    }
+
+    async verifyOtp(phoneNumber: string, code: string): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        user: User;
+    }> {
+        const storedOtp = await this.redis.get(`otp:${phoneNumber}`);
+
+        if (!storedOtp || storedOtp !== code) {
             throw new UnauthorizedException('Invalid OTP');
         }
-        this.otpStore.delete(phoneNumber);
 
-        const user = await this.userService.createUser(phoneNumber);
-        const payload = { phoneNumber, role: user.role };
-        const token = this.jwtService.sign(payload);
+        await this.redis.del(`otp:${phoneNumber}`);
+        const user = await this.usersService.findOrCreate(phoneNumber);
 
-        return { token, role: user.role };
+        return {
+            accessToken: this.generateAccessToken(user),
+            refreshToken: this.generateRefreshToken(user),
+            user,
+        };
+    }
+
+    private generateAccessToken(user: User): string {
+        return this.jwtService.sign({
+            sub: user.id,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+        });
+    }
+
+    private generateRefreshToken(user: User): string {
+        return this.jwtService.sign({
+            sub: user.id,
+        }, {
+            secret: this.config.get('JWT_REFRESH_SECRET'),
+            expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'),
+        });
+    }
+
+    async refreshTokens(refreshToken: string) {
+        try {
+            const payload = this.jwtService.verify(refreshToken, {
+                secret: this.config.get('JWT_REFRESH_SECRET'),
+            });
+
+            const user = await this.usersService.findById(payload.sub);
+            if (!user) throw new UnauthorizedException();
+
+            return {
+                accessToken: this.generateAccessToken(user),
+                refreshToken: this.generateRefreshToken(user),
+            };
+        } catch (e) {
+            throw new UnauthorizedException('Invalid refresh token');
+        }
     }
 }
-
