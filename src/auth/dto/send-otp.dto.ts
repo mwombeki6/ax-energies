@@ -1,6 +1,6 @@
 import { IsPhoneNumber } from "class-validator";
 
-export class RequestOtpDto {
+export class SendOtpDto {
     @IsPhoneNumber('TZ')
     phoneNumber: string
 }
