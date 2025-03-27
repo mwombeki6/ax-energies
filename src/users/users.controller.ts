@@ -1,11 +1,24 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UserService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller('users')
-export class UsersController {
+@Controller('user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  async create(@Body() userData: CreateUserDto) {
+    try {
+      return await this.userService.create(userData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Request() req) {
-    return { phoneNumber: req.user.phoneNumber, role: req.user.role };
+  async getProfile(@Body('phoneNumber') phoneNumber: string) {
+    return this.userService.getByPhoneNumber(phoneNumber);
   }
 }

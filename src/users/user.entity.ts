@@ -13,19 +13,16 @@ export enum UserType {
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @Column({ unique: true })
-  phoneNumber: string;
+  public phoneNumber: string;
+
+  @Column({ default: false })
+  public isPhoneNumberConfirmed: boolean;
 
   @Column({ type: 'enum', enum: UserType, default: UserType.CUSTOMER })
   role: UserType;
-
-  @Column()
-  otpHash: string;
-
-  @Column()
-  otpExpiry: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -35,4 +32,7 @@ export class User {
 
   @Column({ default: '' })
   profile: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  public lastLogin: Date;
 }

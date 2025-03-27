@@ -1,31 +1,26 @@
-// ----------------------------
-// 3. Authentication Module
-// ----------------------------
-// src/auth/auth.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from '../users/users.module';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
-//import { RedisModule } from '../redis/redis.module';
-//import { SmsModule } from '../sms/sms.module';
 
 @Module({
   imports: [
-    UsersModule,
-    //RedisModule,
-    //SmsModule,
+    UserModule,
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => ({
-        secret: config.get('JWT_SECRET'),
-        signOptions: { expiresIn: config.get('JWT_EXPIRES_IN') },
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
       }),
       inject: [ConfigService],
     }),
   ],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  providers: [AuthService],
 })
 export class AuthModule {}
