@@ -29,11 +29,10 @@ export class UserService {
   }
 
   async markPhoneNumberAsConfirmed(userId: number): Promise<User> {
-    await this.userRepository.update(
-      { id: userId },
-      { isPhoneNumberConfirmed: true },
-    );
-    return this.getById(userId);
+    const user = await this.getById(userId); // Ensure user exists
+
+    user.isPhoneNumberConfirmed = true;
+    return this.userRepository.save(user); // Save and return updated user
   }
 
   async update(userId: number, updateData: Partial<User>): Promise<User> {

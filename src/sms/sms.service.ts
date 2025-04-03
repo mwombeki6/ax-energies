@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Twilio } from 'twilio';
 import { UserService } from '../users/users.service';
@@ -19,7 +23,9 @@ export class SmsService {
   }
 
   async initiatePhoneNumberVerification(phoneNumber: string) {
-    const serviceSid = this.configService.get('TWILIO_VERIFICATION_SERVICE_SID');
+    const serviceSid = this.configService.get(
+      'TWILIO_VERIFICATION_SERVICE_SID',
+    );
 
     try {
       return await this.twilioClient.verify
@@ -35,7 +41,9 @@ export class SmsService {
     phoneNumber: string,
     verificationCode: string,
   ): Promise<User> {
-    const serviceSid = this.configService.get('TWILIO_VERIFICATION_SERVICE_SID');
+    const serviceSid = this.configService.get(
+      'TWILIO_VERIFICATION_SERVICE_SID',
+    );
 
     try {
       const result = await this.twilioClient.verify
@@ -56,16 +64,28 @@ export class SmsService {
   }
 
   async sendMessage(receiverPhoneNumber: string, message: string) {
-    const senderPhoneNumber = this.configService.get('TWILIO_SENDER_PHONE_NUMBER');
+    const senderPhoneNumber = this.configService.get(
+      'TWILIO_SENDER_PHONE_NUMBER',
+    );
+
+    if (!senderPhoneNumber) {
+      throw new BadRequestException(
+        'Twilio sender phone number is not configured',
+      );
+    }
 
     try {
-      return await this.twilioClient.messages.create({
+      const response = await this.twilioClient.messages.create({
         body: message,
         from: senderPhoneNumber,
         to: receiverPhoneNumber,
       });
+
+      console.log('Twilio SMS Response:', response); // Log Twilio response for debugging
+      return { message: 'Message sent successfully', sid: response.sid };
     } catch (error) {
-      throw new BadRequestException('Failed to send message');
+      console.error('Twilio Error:', error); // Log detailed error
+      throw new BadRequestException(`Failed to send message: ${error.message}`);
     }
   }
 }

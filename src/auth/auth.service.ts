@@ -14,7 +14,11 @@ export class AuthService {
     return this.userService.getByPhoneNumber(phoneNumber);
   }
 
-  async login(user: User) {
+  async createUser(phoneNumber: string): Promise<User> {
+    return this.userService.create({ phoneNumber });
+  }
+
+    async login(user: User) {
     const payload = { phoneNumber: user.phoneNumber, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),

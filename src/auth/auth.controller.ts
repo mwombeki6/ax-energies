@@ -1,4 +1,10 @@
-import { Controller, Post, Body, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SmsService } from '../sms/sms.service';
 import { CheckVerificationCodeDto } from '../sms/dto/check-verification-code.dto';
@@ -17,12 +23,13 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authService.validateUser(phoneNumber);
+      let user = await this.authService.validateUser(phoneNumber);
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        user = await this.authService.createUser(phoneNumber);
       }
+
       await this.smsService.initiatePhoneNumberVerification(phoneNumber);
-      return { message: 'Verification code sent' };
+      return { message: 'Verification code sent', user };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -35,7 +42,9 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authService.validateUser(verificationData.phoneNumber);
+      const user = await this.authService.validateUser(
+        verificationData.phoneNumber,
+      );
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
@@ -48,9 +57,13 @@ export class AuthController {
 
       return this.authService.login(verifiedUser);
     } catch (error) {
-      if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
+      ) {
         throw error;
       }
+      console.error('Verification failed:', error);
       throw new BadRequestException('Verification failed');
     }
   }

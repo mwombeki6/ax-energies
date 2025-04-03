@@ -4,13 +4,18 @@ import {
   Post,
   Param,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { SmsService } from './sms.service';
 import { CheckVerificationCodeDto } from './dto/check-verification-code.dto';
+import { UserService } from '../users/users.service';
 
 @Controller('sms')
 export class SmsController {
-  constructor(private readonly smsService: SmsService) {}
+  constructor(
+    private readonly smsService: SmsService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post(':phoneNumber/initiate-verification')
   async initiatePhoneNumberVerification(
@@ -26,10 +31,18 @@ export class SmsController {
     @Body() verificationData: CheckVerificationCodeDto,
   ) {
     // @ts-ignore
-    const user = await this.smsService.confirmPhoneNumber(
+    const user = await this.userService.getByPhoneNumber(phoneNumber);
+    if (!user) {
+      throw new NotFoundException('User does not exist');
+    }
+
+    //Verify the code
+    const verifiedUser = await this.smsService.confirmPhoneNumber(
+      user.id,
       phoneNumber,
       verificationData.code,
     );
+
     return { message: 'Phone number confirmed', user };
   }
 
