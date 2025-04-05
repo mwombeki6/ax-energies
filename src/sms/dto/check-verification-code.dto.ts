@@ -10,3 +10,10 @@ export class CheckVerificationCodeDto {
   @IsNotEmpty()
   code: string;
 }
+
+export class Create_UserDto {
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+[1-9]\d{1,14}$/, { message: 'Invalid phone number format' })
+  phoneNumber: string;
+}

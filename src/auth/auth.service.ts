@@ -18,7 +18,7 @@ export class AuthService {
     return this.userService.create({ phoneNumber });
   }
 
-    async login(user: User) {
+  async login(user: User) {
     const payload = { phoneNumber: user.phoneNumber, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
