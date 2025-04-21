@@ -7,7 +7,7 @@ import {
 
 export enum UserType {
   CUSTOMER = 'customer',
-  ATTENDANT = 'attendant',
+  STATION_OWNER = 'station_owner',
 }
 
 @Entity('users')
@@ -15,13 +15,19 @@ export class User {
   @PrimaryGeneratedColumn()
   public id: number;
 
+  @Column({ nullable: true, unique: true })
+  email: string;
+
+  @Column({ nullable: true })
+  password: string;
+
   @Column({ unique: true })
   public phoneNumber: string;
 
   @Column({ default: false })
   public isPhoneNumberConfirmed: boolean;
 
-  @Column({ type: 'enum', enum: UserType, default: UserType.CUSTOMER })
+  @Column({ type: 'enum', enum: UserType })
   role: UserType;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -35,4 +41,17 @@ export class User {
 
   @Column({ type: 'timestamp', nullable: true })
   public lastLogin: Date;
+
+  // Profile fields for station owners
+  @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  companyName: string;
+
+  @Column({ nullable: true })
+  businessAddress: string;
+
+  @Column({ nullable: true })
+  profileImageUrl: string; // Optional
 }

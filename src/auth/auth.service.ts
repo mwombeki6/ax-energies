@@ -25,4 +25,10 @@ export class AuthService {
       user,
     };
   }
+
+  async createStationOwner(email: string, password: string): Promise<string> {
+    return this.userService.createStationOwner({email, password})
+  }
+
+
 }
