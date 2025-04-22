@@ -21,7 +21,7 @@ export class User {
   @Column({ nullable: true })
   password: string;
 
-  @Column({ unique: true })
+  @Column({nullable: true, unique: true })
   public phoneNumber: string;
 
   @Column({ default: false })

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/users.service';
-import { User } from '../users/user.entity';
+import { User, UserType } from '../users/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -30,5 +31,18 @@ export class AuthService {
     return this.userService.createStationOwner({email, password})
   }
 
+  async loginStationOwner(email: string, password: string): Promise<any> {
+    const user = await this.userService.getByEmail(email);
+    if (!user || user.role !== UserType.STATION_OWNER) {
+      throw new UnauthorizedException();
+    }
 
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) throw new UnauthorizedException();
+
+    return {
+      access_token: this.jwtService.signAsync(user),
+      user,
+    }
+  }
 }
