@@ -8,6 +8,8 @@ import { SmsModule } from './sms/sms.module';
 import { AuthModule } from './auth/auth.module';
 import { StationModule } from './station/station.module';
 import { PumpModule } from './pump/pump.module';
+import { FuelPriceModule } from './fuel_price/fuel_price.module';
+import { FuelTypeModule } from './fuel_type/fuel_type.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { PumpModule } from './pump/pump.module';
     AuthModule,
     StationModule,
     PumpModule,
+    FuelPriceModule,
+    FuelTypeModule,
   ],
 })
 export class AppModule {}
