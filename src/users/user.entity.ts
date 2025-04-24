@@ -1,9 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserType {
   CUSTOMER = 'customer',
@@ -21,7 +16,7 @@ export class User {
   @Column({ nullable: true })
   password: string;
 
-  @Column({nullable: true, unique: true })
+  @Column({ nullable: true, unique: true })
   public phoneNumber: string;
 
   @Column({ default: false })
