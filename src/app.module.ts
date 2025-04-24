@@ -10,6 +10,7 @@ import { StationModule } from './station/station.module';
 import { PumpModule } from './pump/pump.module';
 import { FuelPriceModule } from './fuel_price/fuel_price.module';
 import { FuelTypeModule } from './fuel_type/fuel_type.module';
+import { FuelInventoryModule } from './fuel_inventory/fuel_inventory.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { FuelTypeModule } from './fuel_type/fuel_type.module';
     PumpModule,
     FuelPriceModule,
     FuelTypeModule,
+    FuelInventoryModule,
   ],
 })
 export class AppModule {}
