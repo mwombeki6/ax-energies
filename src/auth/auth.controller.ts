@@ -92,8 +92,7 @@ export class AuthController {
   @Post('loginStationOwner')
   async loginStationOwner(@Body() verificationData: LoginDto) {
     return this.authService.loginStationOwner(
-      verificationData.email,
-      verificationData.password,
+      verificationData
     );
   }
 

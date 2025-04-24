@@ -27,7 +27,11 @@ export class UserService {
     });
 
     await this.userRepository.save(user);
-    return this.jwtService.signAsync(user);
+    return this.jwtService.signAsync({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
   }
 
   async create(userData: CreateUserDto): Promise<User> {
@@ -61,5 +65,11 @@ export class UserService {
 
   async getByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
+  }
+
+  async updateLastLogin(userId: number) {
+    await this.userRepository.update(userId, {
+      lastLogin: new Date(),
+    });
   }
 }

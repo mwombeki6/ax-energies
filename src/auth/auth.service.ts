@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/users.service';
 import { User, UserType } from '../users/user.entity';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,21 +29,26 @@ export class AuthService {
   }
 
   async createStationOwner(email: string, password: string): Promise<string> {
-    return this.userService.createStationOwner({email, password})
+    return this.userService.createStationOwner({ email, password });
   }
 
-  async loginStationOwner(email: string, password: string): Promise<any> {
-    const user = await this.userService.getByEmail(email);
+  async loginStationOwner(loginDto: LoginDto): Promise<any> {
+    const user = await this.userService.getByEmail(loginDto.email);
     if (!user || user.role !== UserType.STATION_OWNER) {
       throw new UnauthorizedException();
     }
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(loginDto.password, user.password);
     if (!match) throw new UnauthorizedException();
 
+    // Update Last Login
+    await this.userService.updateLastLogin(user.id);
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+
     return {
-      access_token: this.jwtService.signAsync(user),
-      user,
-    }
+      access_token: this.jwtService.signAsync(payload),
+      user: {payload},
+    };
   }
 }
