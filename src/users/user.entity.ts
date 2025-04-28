@@ -3,6 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export enum UserType {
   CUSTOMER = 'customer',
   STATION_OWNER = 'station_owner',
+  ADMIN = 'admin',
 }
 
 @Entity('users')
@@ -49,4 +50,8 @@ export class User {
 
   @Column({ nullable: true })
   profileImageUrl: string; // Optional
+
+  isAdmin(): boolean {
+    return this.role === UserType.ADMIN;
+  }
 }

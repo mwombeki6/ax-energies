@@ -15,6 +15,18 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
+  async createAdminUser(email: string, password: string, fullName: string): Promise<User> {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = new User();
+    admin.email = email;
+    admin.password = hashedPassword;
+    admin.fullName = fullName;
+    admin.role = UserType.ADMIN;
+
+    return this.userRepository.save(admin);
+  }
+
   async createStationOwner(userData: CreateStationOwnerDto): Promise<string> {
     const existing = await this.userRepository.findOne({ where: { email: userData.email } });
     if (existing) throw new ConflictException('Email already exists');

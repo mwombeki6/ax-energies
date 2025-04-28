@@ -39,9 +39,9 @@ export class UpdateFuelInventoryDto {
 
 export class FuelInventoryResponseDto {
   id: string;
-  stationId: string;
+  station: string;
   stationName: string;
-  fuelTypeId: string;
+  fuelTypes: string;
   fuelTypeName: string;
   currentLevel: number;
   capacity: number;

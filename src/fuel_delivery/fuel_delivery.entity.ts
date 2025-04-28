@@ -20,7 +20,7 @@ export class FuelDelivery {
   deliveryDate: Date;
 
   @Column()
-  invoiceNumber: number;
+  invoiceNumber: string;
 
   @Column()
   supplierName: string;

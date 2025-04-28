@@ -33,7 +33,7 @@ export class CreateFuelDeliveryDto {
   purchasePrice: number;
 }
 
-export class FuelDeliveryResponseFDto {
+export class FuelDeliveryResponseDto {
   id: string;
   stationId: string;
   stationName: string;

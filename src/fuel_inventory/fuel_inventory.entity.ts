@@ -34,4 +34,30 @@ export class FuelInventory {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Calculated properties
+  get percentageFull(): number {
+    return this.capacity > 0
+      ? Math.round((Number(this.currentLevel) / Number(this.capacity)) * 100)
+      : 0;
+  }
+
+  get status(): 'NORMAL' | 'LOW' | 'CRITICAL' {
+    if (Number(this.currentLevel) <= Number(this.lowLevelThreshold) / 2) {
+      return 'CRITICAL';
+    } else if (Number(this.currentLevel) <= Number(this.lowLevelThreshold)) {
+      return 'LOW';
+    }
+    return 'NORMAL';
+  }
+
+  // Convenience getters for related entities
+  get stationName(): string {
+    return this.station?.name || '';
+  }
+
+  get fuelTypeName(): string {
+    return this.fuelTypes?.name || '';
+  }
+
 }
