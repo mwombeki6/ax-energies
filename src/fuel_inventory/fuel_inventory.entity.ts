@@ -14,7 +14,7 @@ export class FuelInventory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Station, (station) => station.fuelInventories)
+  @ManyToOne(() => Station, (station) => station)
   station: Station;
 
   @ManyToOne(() => FuelType)
@@ -28,6 +28,12 @@ export class FuelInventory {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   lowLevelThreshold: number;
+
+  @CreateDateColumn()
+  lastRefillDate: Date;
+
+  @CreateDateColumn()
+  expectedDeliveryDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -4,7 +4,12 @@ import { FuelInventory } from './fuel_inventory.entity';
 import { Repository } from 'typeorm';
 import { Station } from '../station/station.entity';
 import { FuelType } from '../fuel_type/fuel_type.entity';
-import { CreateFuelInventoryDto, FuelInventoryResponseDto, UpdateFuelInventoryDto } from './dto/fuel_inventory.dto';
+import {
+  CreateFuelInventoryDto,
+  FuelInventoryResponseDto,
+  FuelStatus,
+  UpdateFuelInventoryDto,
+} from './dto/fuel_inventory.dto';
 
 @Injectable()
 export class FuelInventoryService {
@@ -18,14 +23,22 @@ export class FuelInventoryService {
   ) {}
 
   async create(createDto: CreateFuelInventoryDto): Promise<FuelInventory> {
-    const station = await this.stationRepository.findOne({ where: { id: createDto.stationId } });
+    const station = await this.stationRepository.findOne({
+      where: { id: createDto.stationId },
+    });
     if (!station) {
-      throw new NotFoundException(`Station with ID ${createDto.stationId} not found`);
+      throw new NotFoundException(
+        `Station with ID ${createDto.stationId} not found`,
+      );
     }
 
-    const fuelType = await this.fuelTypeRepository.findOne({ where: { id: createDto.fuelTypeId } });
+    const fuelType = await this.fuelTypeRepository.findOne({
+      where: { id: createDto.fuelTypeId },
+    });
     if (!fuelType) {
-      throw new NotFoundException(`Fuel type with ID ${createDto.fuelTypeId} not found`);
+      throw new NotFoundException(
+        `Fuel type with ID ${createDto.fuelTypeId} not found`,
+      );
     }
 
     // Check if inventory for this fuel type already exists at this station
@@ -38,7 +51,9 @@ export class FuelInventoryService {
     });
 
     if (existingInventory) {
-      throw new BadRequestException(`Inventory for this fuel type already exists at this station`);
+      throw new BadRequestException(
+        `Inventory for this fuel type already exists at this station`,
+      );
     }
 
     const inventory = new FuelInventory();
@@ -51,21 +66,27 @@ export class FuelInventoryService {
     return this.fuelInventoryRepository.save(inventory);
   }
 
-  async findAll(): Promise<FuelInventoryResponseDto[]> {
+  async findAll(p: {
+    page: number;
+    limit: number;
+  }): Promise<FuelInventoryResponseDto[]> {
     const inventories = await this.fuelInventoryRepository.find({
       relations: ['station', 'fuelType'],
     });
 
-    return inventories.map(inventory => this.mapToResponseDto(inventory));
+    return inventories.map((inventory) => this.mapToResponseDto(inventory));
   }
 
-  async findByStation(stationId: string): Promise<FuelInventoryResponseDto[]> {
+  async findByStation(
+    stationId: string,
+    p: { page: number; limit: number },
+  ): Promise<FuelInventoryResponseDto[]> {
     const inventories = await this.fuelInventoryRepository.find({
       where: { station: { id: stationId } },
       relations: ['station', 'fuelType'],
     });
 
-    return inventories.map(inventory => this.mapToResponseDto(inventory));
+    return inventories.map((inventory) => this.mapToResponseDto(inventory));
   }
 
   async findOne(id: string): Promise<FuelInventoryResponseDto> {
@@ -81,7 +102,10 @@ export class FuelInventoryService {
     return this.mapToResponseDto(inventory);
   }
 
-  async update(id: string, updateDto: UpdateFuelInventoryDto): Promise<FuelInventoryResponseDto> {
+  async update(
+    id: string,
+    updateDto: UpdateFuelInventoryDto,
+  ): Promise<FuelInventoryResponseDto> {
     const inventory = await this.fuelInventoryRepository.findOne({
       where: { id },
       relations: ['station', 'fuelType'],
@@ -119,7 +143,10 @@ export class FuelInventoryService {
   }
 
   // Method to update inventory level after a fuel delivery
-  async updateLevelAfterDelivery(id: string, quantity: number): Promise<FuelInventoryResponseDto> {
+  async updateLevelAfterDelivery(
+    id: string,
+    quantity: number,
+  ): Promise<FuelInventoryResponseDto> {
     const inventory = await this.fuelInventoryRepository.findOne({
       where: { id },
       relations: ['station', 'fuelType'],
@@ -133,7 +160,9 @@ export class FuelInventoryService {
 
     // Check if new level exceeds capacity
     if (newLevel > inventory.capacity) {
-      throw new BadRequestException(`Delivery would exceed tank capacity. Maximum additional quantity allowed: ${inventory.capacity - inventory.currentLevel}`);
+      throw new BadRequestException(
+        `Delivery would exceed tank capacity. Maximum additional quantity allowed: ${inventory.capacity - inventory.currentLevel}`,
+      );
     }
 
     inventory.currentLevel = newLevel;
@@ -143,7 +172,10 @@ export class FuelInventoryService {
   }
 
   // Method to update inventory level after a fuel sale
-  async updateLevelAfterSale(id: string, quantity: number): Promise<FuelInventoryResponseDto> {
+  async updateLevelAfterSale(
+    id: string,
+    quantity: number,
+  ): Promise<FuelInventoryResponseDto> {
     const inventory = await this.fuelInventoryRepository.findOne({
       where: { id },
       relations: ['station', 'fuelType'],
@@ -157,7 +189,9 @@ export class FuelInventoryService {
 
     // Check if new level would go below zero
     if (newLevel < 0) {
-      throw new BadRequestException(`Insufficient fuel quantity. Available: ${inventory.currentLevel}`);
+      throw new BadRequestException(
+        `Insufficient fuel quantity. Available: ${inventory.currentLevel}`,
+      );
     }
 
     inventory.currentLevel = newLevel;
@@ -173,29 +207,37 @@ export class FuelInventoryService {
     });
 
     return inventories
-      .filter(inventory => inventory.currentLevel <= inventory.lowLevelThreshold)
-      .map(inventory => this.mapToResponseDto(inventory));
+      .filter(
+        (inventory) => inventory.currentLevel <= inventory.lowLevelThreshold,
+      )
+      .map((inventory) => this.mapToResponseDto(inventory));
+  }
+
+  private getInventoryStatus(inventory: FuelInventory): FuelStatus {
+    if (inventory.currentLevel <= 0) return FuelStatus.OUT_OF_STOCK;
+    if (inventory.currentLevel <= inventory.lowLevelThreshold / 2) return FuelStatus.CRITICAL;
+    if (inventory.currentLevel <= inventory.lowLevelThreshold) return FuelStatus.LOW;
+    return FuelStatus.NORMAL;
   }
 
   private mapToResponseDto(inventory: FuelInventory): FuelInventoryResponseDto {
-    const percentageFull = (inventory.currentLevel / inventory.capacity) * 100;
-
-    let status: 'NORMAL' | 'LOW' | 'CRITICAL' = 'NORMAL';
-    if (inventory.currentLevel <= inventory.lowLevelThreshold) {
-      status = inventory.currentLevel <= (inventory.lowLevelThreshold / 2) ? 'CRITICAL' : 'LOW';
-    }
+    const percentageFull = inventory.capacity > 0
+      ? (inventory.currentLevel / inventory.capacity) * 100
+      : 0;
 
     return {
       id: inventory.id,
-      stationId: inventory.station.id,
+      station: inventory.station.id,
       stationName: inventory.station.name,
-      fuelTypeId: inventory.fuelTypes.id,
+      fuelTypes: inventory.fuelTypes.id,
       fuelTypeName: inventory.fuelTypes.name,
       currentLevel: inventory.currentLevel,
       capacity: inventory.capacity,
       lowLevelThreshold: inventory.lowLevelThreshold,
-      percentageFull,
-      status,
+      percentageFull: Math.round(percentageFull),
+      status: this.getInventoryStatus(inventory),
+      lastRefillDate: inventory.lastRefillDate,
+      expectedDeliveryDate: inventory.expectedDeliveryDate,
       updatedAt: inventory.updatedAt,
     };
   }

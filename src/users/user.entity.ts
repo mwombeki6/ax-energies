@@ -54,4 +54,8 @@ export class User {
   isAdmin(): boolean {
     return this.role === UserType.ADMIN;
   }
+
+  isStationOwner(): boolean {
+    return this.role === UserType.STATION_OWNER;
+  }
 }
