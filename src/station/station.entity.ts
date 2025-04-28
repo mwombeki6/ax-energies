@@ -35,8 +35,8 @@ export class Station {
   @OneToMany(() => FuelInventory, (inventory) => inventory.station)
   fuelInventories: FuelInventory[];
 
-  @OneToMany(() => Staff, (staff) => staff.station)
-  staff: Staff[];
+  //@OneToMany(() => Staff, (staff) => staff.station)
+  //staff: Staff[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.station)
   transactions: Transaction[];
