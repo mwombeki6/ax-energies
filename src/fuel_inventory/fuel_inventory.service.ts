@@ -220,7 +220,21 @@ export class FuelInventoryService {
     return FuelStatus.NORMAL;
   }
 
-  private mapToResponseDto(inventory: FuelInventory): FuelInventoryResponseDto {
+  private mapToResponseDto(inventory: FuelInventory): {
+    id: string;
+    station: string;
+    stationName: string;
+    fuelTypes: string;
+    fuelTypeName: string;
+    currentLevel: number;
+    capacity: number;
+    lowLevelThreshold: number;
+    percentageFull: number;
+    status: FuelStatus;
+    lastRefillDate: Date;
+    expectedDeliveryDate: Date;
+    updatedAt: Date
+  } {
     const percentageFull = inventory.capacity > 0
       ? (inventory.currentLevel / inventory.capacity) * 100
       : 0;
