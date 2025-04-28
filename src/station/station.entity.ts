@@ -1,5 +1,12 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../users/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+//import { User } from '../users/user.entity';
 import { FuelInventory } from '../fuel_inventory/fuel_inventory.entity';
 import { Pump } from '../pump/pump.entity';
 
