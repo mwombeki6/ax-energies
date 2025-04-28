@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Station } from '../station/station.entity';
+import { FuelType } from '../fuel_type/fuel_type.entity';
 
 export enum PumpStatus {
   ACTIVE = 'active',

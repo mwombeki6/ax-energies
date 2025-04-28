@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FuelInventory } from './fuel_inventory.entity';
 import { Repository } from 'typeorm';
@@ -215,8 +219,10 @@ export class FuelInventoryService {
 
   private getInventoryStatus(inventory: FuelInventory): FuelStatus {
     if (inventory.currentLevel <= 0) return FuelStatus.OUT_OF_STOCK;
-    if (inventory.currentLevel <= inventory.lowLevelThreshold / 2) return FuelStatus.CRITICAL;
-    if (inventory.currentLevel <= inventory.lowLevelThreshold) return FuelStatus.LOW;
+    if (inventory.currentLevel <= inventory.lowLevelThreshold / 2)
+      return FuelStatus.CRITICAL;
+    if (inventory.currentLevel <= inventory.lowLevelThreshold)
+      return FuelStatus.LOW;
     return FuelStatus.NORMAL;
   }
 
@@ -233,11 +239,12 @@ export class FuelInventoryService {
     status: FuelStatus;
     lastRefillDate: Date;
     expectedDeliveryDate: Date;
-    updatedAt: Date
+    updatedAt: Date;
   } {
-    const percentageFull = inventory.capacity > 0
-      ? (inventory.currentLevel / inventory.capacity) * 100
-      : 0;
+    const percentageFull =
+      inventory.capacity > 0
+        ? (inventory.currentLevel / inventory.capacity) * 100
+        : 0;
 
     return {
       id: inventory.id,

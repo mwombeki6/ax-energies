@@ -29,17 +29,17 @@ export class Station {
   @OneToMany(() => Pump, (pump) => pump.station)
   pumps: Pump[];
 
-  @OneToMany(() => User, (user) => user.station)
-  users: User[];
+  //@OneToMany(() => User, (user) => user.station)
+  //users: User[];
 
   @OneToMany(() => FuelInventory, (inventory) => inventory.station)
   fuelInventories: FuelInventory[];
 
-  @OneToMany(() => Staff, (staff) => staff.station)
-  staff: Staff[];
+  //@OneToMany(() => Staff, (staff) => staff.station)
+  //staff: Staff[];
 
-  @OneToMany(() => Transaction, (transaction) => transaction.station)
-  transactions: Transaction[];
+  //@OneToMany(() => Transaction, (transaction) => transaction.station)
+  //transactions: Transaction[];
 
   @CreateDateColumn()
   createdAt: Date;
