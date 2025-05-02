@@ -16,7 +16,7 @@ export class FuelDelivery {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   quantity: number;
 
-  @Column({ type: 'datetime2' })
+  @Column({ type: 'timestamp' })
   deliveryDate: Date;
 
   @Column()

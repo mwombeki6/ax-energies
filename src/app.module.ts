@@ -10,9 +10,9 @@ import { StationModule } from './station/station.module';
 import { PumpModule } from './pump/pump.module';
 import { FuelPriceModule } from './fuel_price/fuel_price.module';
 import { FuelTypeModule } from './fuel_type/fuel_type.module';
-import { FuelInventoryModule } from './fuel_inventory/fuel_inventory.module';
 import { FuelDeliveryModule } from './fuel_delivery/fuel_delivery.module';
 import { FuelInventoryModule } from './fuel_inventory/fuel_inventory.module';
+import { Pump } from './pump/pump.entity';
 
 @Module({
   imports: [
@@ -66,6 +66,7 @@ import { FuelInventoryModule } from './fuel_inventory/fuel_inventory.module';
     FuelTypeModule,
     FuelInventoryModule,
     FuelDeliveryModule,
+    Pump,
   ],
 })
 export class AppModule {}
