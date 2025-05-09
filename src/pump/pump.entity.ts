@@ -33,16 +33,16 @@ export class Pump {
   @Column({ type: 'float', nullable: true })
   flowRate: number;
 
-  @ManyToOne(() => Station, (station) => station.pumps)
+  @ManyToOne(() => Station, (station) => station.pumps, { nullable: false })
   station: Station;
 
-  @ManyToOne(() => FuelType)
+  @ManyToOne(() => FuelType, (fuelType) => fuelType.pumps, { nullable: false })
   fuelType: FuelType;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   lastMaintenanceDate: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   nextMaintenanceDate: Date;
 
   @CreateDateColumn()
@@ -51,3 +51,4 @@ export class Pump {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

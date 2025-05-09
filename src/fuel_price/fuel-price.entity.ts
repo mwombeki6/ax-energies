@@ -14,10 +14,10 @@ export class FuelPrice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => FuelType)
+  @ManyToOne(() => FuelType, (fuelType) => fuelType.fuelPrice, { nullable: false })
   fuelType: FuelType;
 
-  @ManyToOne(() => Station)
+  @ManyToOne(() => Station, (station) => station.fuelPrices, { nullable: false })
   station: Station;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -26,7 +26,7 @@ export class FuelPrice {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   scheduleDate: Date;
 
   @CreateDateColumn()
@@ -35,3 +35,4 @@ export class FuelPrice {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

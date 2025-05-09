@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Station } from '../station/station.entity';
 
 export enum UserType {
   CUSTOMER = 'customer',
@@ -50,6 +51,9 @@ export class User {
 
   @Column({ nullable: true })
   profileImageUrl: string; // Optional
+
+  @OneToOne(() => Station, (station) => station.users)
+  owner: Station;
 
   isAdmin(): boolean {
     return this.role === UserType.ADMIN;

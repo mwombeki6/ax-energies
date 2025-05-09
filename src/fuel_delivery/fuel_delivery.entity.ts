@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Station } from '../station/station.entity';
 import { FuelInventory } from '../fuel_inventory/fuel_inventory.entity';
 
@@ -7,10 +13,10 @@ export class FuelDelivery {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Station)
+  @ManyToOne(() => Station, (station) => station.fuelDeliveries, { nullable: false })
   station: Station;
 
-  @ManyToOne(() => FuelInventory)
+  @ManyToOne(() => FuelInventory, (inventory) => inventory.deliveries, { nullable: false })
   fuelInventory: FuelInventory;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -31,3 +37,4 @@ export class FuelDelivery {
   @CreateDateColumn()
   createdAt: Date;
 }
+

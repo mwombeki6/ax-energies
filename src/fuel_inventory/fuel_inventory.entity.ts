@@ -2,23 +2,24 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Station } from '../station/station.entity';
 import { FuelType } from '../fuel_type/fuel_type.entity';
+import { FuelDelivery } from '../fuel_delivery/fuel_delivery.entity';
 
 @Entity()
 export class FuelInventory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Station, (station) => station)
+  @ManyToOne(() => Station, (station) => station.fuelInventories)
   station: Station;
 
-  @ManyToOne(() => FuelType)
-  fuelTypes: FuelType;
+  @ManyToOne(() => FuelType, {eager: true})
+  fuelType: FuelType;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   currentLevel: number;
@@ -40,6 +41,9 @@ export class FuelInventory {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => FuelDelivery, (delivery) => delivery.fuelInventory)
+  deliveries: FuelDelivery[];
 
   // Calculated properties
   get percentageFull(): number {
@@ -63,7 +67,7 @@ export class FuelInventory {
   }
 
   get fuelTypeName(): string {
-    return this.fuelTypes?.name || '';
+    return this.fuelType?.name || '';
   }
 
 }

@@ -49,7 +49,7 @@ export class FuelInventoryService {
     const existingInventory = await this.fuelInventoryRepository.findOne({
       where: {
         station: { id: createDto.stationId },
-        fuelTypes: { id: createDto.fuelTypeId },
+        fuelType: { id: createDto.fuelTypeId },
       },
       relations: ['station', 'fuelType'],
     });
@@ -62,7 +62,7 @@ export class FuelInventoryService {
 
     const inventory = new FuelInventory();
     inventory.station = station;
-    inventory.fuelTypes = fuelType;
+    inventory.fuelType = fuelType;
     inventory.currentLevel = createDto.currentLevel;
     inventory.capacity = createDto.capacity;
     inventory.lowLevelThreshold = createDto.lowLevelThreshold;
@@ -250,8 +250,8 @@ export class FuelInventoryService {
       id: inventory.id,
       station: inventory.station.id,
       stationName: inventory.station.name,
-      fuelTypes: inventory.fuelTypes.id,
-      fuelTypeName: inventory.fuelTypes.name,
+      fuelTypes: inventory.fuelType.id,
+      fuelTypeName: inventory.fuelType.name,
       currentLevel: inventory.currentLevel,
       capacity: inventory.capacity,
       lowLevelThreshold: inventory.lowLevelThreshold,

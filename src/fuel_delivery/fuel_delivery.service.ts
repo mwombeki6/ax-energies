@@ -92,7 +92,7 @@ export class FuelDeliveryService {
       stationId: delivery.station.id,
       stationName: delivery.station.name,
       fuelInventoryId: delivery.fuelInventory.id,
-      fuelTypeName: delivery.fuelInventory.fuelTypes.name,
+      fuelTypeName: delivery.fuelInventory.fuelType.name,
       quantity: delivery.quantity,
       deliveryDate: delivery.deliveryDate,
       invoiceNumber: delivery.invoiceNumber,
