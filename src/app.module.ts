@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as Joi from 'joi';
+import Joi from 'joi';
 import { User } from './users/user.entity';
 import { UserModule } from './users/users.module';
 import { SmsModule } from './sms/sms.module';
