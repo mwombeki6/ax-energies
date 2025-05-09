@@ -40,12 +40,12 @@ import { Pump } from './pump/pump.entity';
         // Application Configuration
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test')
-          .default('development'),
+          .default('production'),
       }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService) => ({
+      useFactory: () => ({
         type: 'postgres',
         host: process.env.DB_HOST,
         port: 5432,
