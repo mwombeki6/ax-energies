@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Joi from 'joi';
+const Joi = require('joi').default;
 import { User } from './users/user.entity';
 import { UserModule } from './users/users.module';
 import { SmsModule } from './sms/sms.module';
