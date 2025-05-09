@@ -23,7 +23,7 @@ export class FuelPrice {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ default: true })
+  @Column({ default: true, type: 'boolean' })
   isActive: boolean;
 
   @Column({ type: 'timestamp', nullable: true })

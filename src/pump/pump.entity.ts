@@ -21,10 +21,10 @@ export class Pump {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  pumpNumber: number;
+  @Column({ type: 'varchar', length: 4 })
+  pumpNumber: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   location: string;
 
   @Column({ type: 'enum', enum: PumpStatus, default: PumpStatus.IDLE })

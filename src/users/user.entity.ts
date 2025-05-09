@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { Station } from '../station/station.entity';
 
 export enum UserType {
@@ -12,16 +12,16 @@ export class User {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true, unique: true, type: 'varchar', length: 100 })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   password: string;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true, unique: true, type: 'varchar', length: 10 })
   public phoneNumber: string;
 
-  @Column({ default: false })
+  @Column({ default: false, type: 'boolean' })
   public isPhoneNumberConfirmed: boolean;
 
   @Column({ type: 'enum', enum: UserType })
@@ -33,23 +33,23 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @Column({ default: '' })
+  @Column({ default: '', type: 'varchar' })
   profile: string;
 
   @Column({ type: 'timestamp', nullable: true })
   public lastLogin: Date;
 
   // Profile fields for station owners
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   fullName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   companyName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   businessAddress: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   profileImageUrl: string; // Optional
 
   @OneToOne(() => Station, (station) => station.users)

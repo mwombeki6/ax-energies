@@ -59,7 +59,7 @@ export class AuthController {
         verificationData.phoneNumber,
       );
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        return new UnauthorizedException('User not found');
       }
 
       const verifiedUser = await this.smsService.confirmPhoneNumber(

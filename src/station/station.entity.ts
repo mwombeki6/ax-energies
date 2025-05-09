@@ -18,22 +18,22 @@ export class Station {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   description: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   address: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'blob' })
   logoUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 10 })
   contactPhone: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   contactEmail: string;
 
   @OneToMany(() => FuelPrice, (fuelPrice) => fuelPrice.station)

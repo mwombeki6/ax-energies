@@ -3,7 +3,6 @@ import {
   Controller,
   Post,
   Param,
-  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
 import { SmsService } from './sms.service';

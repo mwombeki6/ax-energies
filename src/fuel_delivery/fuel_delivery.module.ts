@@ -3,7 +3,6 @@ import { FuelDeliveryService } from './fuel_delivery.service';
 import { FuelDeliveryController } from './fuel_delivery.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FuelDelivery } from './fuel_delivery.entity';
-import { FuelInventoryService } from '../fuel_inventory/fuel_inventory.service';
 import { FuelInventoryModule } from '../fuel_inventory/fuel_inventory.module';
 import { Station } from '../station/station.entity';
 

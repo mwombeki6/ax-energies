@@ -25,10 +25,10 @@ export class FuelDelivery {
   @Column({ type: 'timestamp' })
   deliveryDate: Date;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   invoiceNumber: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   supplierName: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })

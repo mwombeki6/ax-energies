@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional, IsUUID, Min } from 'class-validator';
-import { Expose, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export enum FuelStatus {
   NORMAL = 'NORMAL',

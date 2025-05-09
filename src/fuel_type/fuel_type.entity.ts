@@ -15,10 +15,10 @@ export class FuelType {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   description: string;
 
   @OneToMany(() => Pump, (pump) => pump.fuelType)
