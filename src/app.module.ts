@@ -13,6 +13,7 @@ import { FuelTypeModule } from './fuel_type/fuel_type.module';
 import { FuelDeliveryModule } from './fuel_delivery/fuel_delivery.module';
 import { FuelInventoryModule } from './fuel_inventory/fuel_inventory.module';
 import { Pump } from './pump/pump.entity';
+import { FuelPrice } from './fuel_price/fuel-price.entity';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { Pump } from './pump/pump.entity';
         // Application Configuration
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test')
-          .default('production'),
+          .default('development'),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -67,6 +68,7 @@ import { Pump } from './pump/pump.entity';
     FuelInventoryModule,
     FuelDeliveryModule,
     Pump,
+    FuelPrice,
   ],
 })
 export class AppModule {}
