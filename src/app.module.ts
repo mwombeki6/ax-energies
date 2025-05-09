@@ -67,8 +67,6 @@ import { FuelPrice } from './fuel_price/fuel-price.entity';
     FuelTypeModule,
     FuelInventoryModule,
     FuelDeliveryModule,
-    Pump,
-    FuelPrice,
   ],
 })
 export class AppModule {}

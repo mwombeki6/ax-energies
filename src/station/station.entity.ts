@@ -27,7 +27,7 @@ export class Station {
   @Column({ type: 'varchar', length: 100 })
   address: string;
 
-  @Column({ nullable: true, type: 'blob' })
+  @Column({ nullable: true, type: 'string' })
   logoUrl: string;
 
   @Column({ nullable: true, type: 'varchar', length: 10 })

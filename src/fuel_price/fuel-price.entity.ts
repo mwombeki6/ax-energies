@@ -14,7 +14,7 @@ export class FuelPrice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => FuelType, (fuelType) => fuelType.fuelPrice, { nullable: false })
+  @ManyToOne(() => FuelType, (fuelType) => fuelType.fuelPrices, { nullable: false })
   fuelType: FuelType;
 
   @ManyToOne(() => Station, (station) => station.fuelPrices, { nullable: false })

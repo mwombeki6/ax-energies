@@ -28,7 +28,7 @@ export class FuelType {
   fuelInventories: FuelInventory[];
 
   @OneToMany(() => FuelPrice, (price) => price.fuelType)
-  fuelPrice: FuelPrice[];
+  fuelPrices: FuelPrice[];
 
   @CreateDateColumn()
   createdAt: Date;
